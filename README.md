@@ -27,24 +27,27 @@ First, generate database role passwords and save them as [Podman][] secrets:
 produces a 25-digit password with 144 bits of entropy, which should be
 enough for anybody ;).
 
-### Start Bookman Service
+### Start Service
 
 To start the containers:
 
-    # start db and web containers
+    # build (if necessary) and start containers
     podman-compose up -d
 
-(If you have not run this service before, this will build and tag images
-for both containers).
+First run caveats:
 
-Once the then expose port 3000 of the `web`
-container on the host.
+1. If you have not run this service before, the command above will build
+   and tag images for both containers.  The tags will be re-used for
+   subsequent boots.
+2. The first time the `db` container boots it will seed the database
+   with several dozen books from [Project Gutenberg][], so the first
+   boot may take few moments.  Subsequent boots wil re-use the existing
+   database.
 
-(Note: The first time the `db` container starts up it will seed the
-database with a few dozen sample books from [Project Gutenberg][], so it
-may take a moment).
+Once the service is initialized, port 3000 of the `web` container is
+exposed on the host and accessible via a web browser.
 
-### Stop Bookman Service
+### Stop Service
 
 To stop the service:
 
@@ -52,6 +55,9 @@ To stop the service:
     podman-compose down
 
 ## Technical Details
+
+Although Bookman is primarily a [podman-compose][] test, there
+are a few technical aspects that may be of interest.
 
 ### Frontend
 
