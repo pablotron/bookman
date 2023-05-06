@@ -144,6 +144,6 @@ Gutenberg][], so it is quite large.
 [fts]: https://www.postgresql.org/docs/current/textsearch-intro.html
   "Full Text Search (FTS)"
 [csp]: https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
-  "Content Security Policy".
+  "Content Security Policy"
 [multi-stage build]: https://docs.docker.com/build/building/multi-stage/
   "Multi-stage build."
