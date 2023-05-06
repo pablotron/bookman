@@ -15,6 +15,9 @@ clean:
 assets:
 	ruby web/assets/build.rb
 
+test:
+	go test ./...
+
 check: vet staticcheck lint
 
 vet:
