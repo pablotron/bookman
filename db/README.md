@@ -25,11 +25,20 @@ To build the image and run an instance:
     echo 'some secret password' | podman secret create bookman_postgres_password -
     echo 'another secret password' | podman secret create bookman_web_password -
 
-    # run container
+    # run db container with the following options:
+    #
+    # 1. expose postgres port
+    # 2. mount db_data volume as /data and save postgres data to /data/pgdata
+    #    (PGDATA must be a subdirectory of a mounted volume or you will
+    #    get permission errors)
+    # 3. expose pair of database role password secrets and pass path to
+    #    secret file to postgres.
     podman run -d -p 5432:5432 \
-      -e POSTGRES_PASSWORD_FILE=/run/secrets/bookman_postgres_password \
+      -v db_data:/data \
+      -e PGDATA=/data/pgdata \
       --secret bookman_postgres_password \
       --secret bookman_web_password \
+      -e POSTGRES_PASSWORD_FILE=/run/secrets/bookman_postgres_password \
       bookman-db
 
 Here's an example query which searches the `books` table using the FTS
@@ -42,3 +51,5 @@ index:
       FROM bookman.books
      WHERE websearch_to_tsquery('english', 'evil monster') @@ ts_vec
      ORDER BY rank DESC;
+
+Additional queries are available in `web/model/sql/`.

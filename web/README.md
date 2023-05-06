@@ -15,24 +15,20 @@ Simple web interface to upload and search through text files.
 
 ## Run
 
-Quick setup
+Quick setup:
 
-    # populate password file
-    echo -n 'asdf' > pass.txt
+    # populate a password file
+    # (note: the contents of this file should contain the password for
+    # the database role specified in the DSN)
+    echo -n 'some password' > pass.txt
 
-    # set env vars
+    # set password file path (defaults to
+    # `/run/secrets/bookman_web_password` if unspecified)
     export BOOKMAN_PASSWORD_PATH=./pass.txt
-    export BOOKMAN_DATABASE_DSN='database=bookman host=worm user=bookman_web'
+
+    # set postgres database DSN, sans password (defaults to `host=db
+    # database=bookman user=bookman_web` if unspecified)
+    export BOOKMAN_DATABASE_DSN='host=db database=bookman user=bookman_web'
 
     # run web server on port :3000
     ./bookman
-
-## Notes
-
-no link: https://stackoverflow.com/questions/1321878/how-to-prevent-favicon-ico-requests
-pg fts: https://www.postgresql.org/docs/current/textsearch-controls.html
-(TODO: ts_headline())
-bs icons:
-https://icons.getbootstrap.com/icons/pencil-square/
-bulma:
-https://bulma.io/documentation/form/general/

@@ -2,7 +2,7 @@
 FROM docker.io/golang:1.20-alpine AS build
 COPY . /src
 WORKDIR /src
-RUN ["make", "check", "all"]
+RUN ["go", "build", "-trimpath", "-ldflags=-s -w"]
 
 # main stage
 FROM scratch

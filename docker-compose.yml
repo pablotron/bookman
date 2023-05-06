@@ -1,15 +1,27 @@
+#
+# compose file for bookman, a basic web interface for storing and
+# searching text files backed by a postgres database.
+#
+# the main point of this tool is to test `podman-compose` to make sure
+# it works as expected.
+#
 version: 3.7
 
 services:
   # database server
   db:
     build: ./db
-    ports:
-      - "5432:5432"
     volumes:
-      - bookman-pgdata:/var/lib/postgresql/data/pgdata
+      # note: PGDATA must be a subdirectory of this directory
+      # see postgres image documentation
+      - db_data:/data
     environment:
+      # get password for `postgres` role from secret
       POSTGRES_PASSWORD_FILE: "/run/secrets/bookman_postgres_password"
+
+      # store database data in a volume rather than in the image
+      # (should be a subdir of mounted db_data volume)
+      PGDATA: "/data/pgdata"
     secrets:
       - bookman_postgres_password 
       - bookman_web_password
@@ -18,18 +30,34 @@ services:
   # web server
   web:
     build: ./web
+    depends_on:
+      - db
+    ports:
+      # externally visible HTTP port
+      - "3000:3000"
     environment:
+      # get password for `bookman_web` role from secret
       BOOKMAN_PASSWORD_PATH: "/run/secrets/bookman_web_password"
+
+      # database DSN
       BOOKMAN_DATABASE_DSN: "host=db dbname=bookman user=bookman_web"
+
+      # HTTP listen address
       BOOKMAN_HTTP_ADDR: ":3000"
     secrets:
       - bookman_postgres_password 
       - bookman_web_password
     restart: always
-    depends_on:
-      - db
 
 secrets:
+  # password for `postgres` database role
   bookman_postgres_password:
     external: true
+
+  # password for `bookman_web` database role
   bookman_web_password:
+    external: true
+
+volumes:
+  # storage for postgres database data
+  db_data:
