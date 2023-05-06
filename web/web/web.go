@@ -2,12 +2,12 @@
 package web
 
 import (
+  "bookman/app"
   "bookman/model"
   "embed"
   "encoding/json"
   "github.com/go-chi/chi/v5"
   "github.com/go-chi/chi/v5/middleware"
-  "github.com/jackc/pgx/v5/pgxpool"
   "io"
   io_fs "io/fs"
   "net/http"
@@ -24,15 +24,15 @@ import (
 // If the `q` request parameter is empty, then the returned list of
 // books is a complete list of books, sorted by name.
 func doApiSearch(w http.ResponseWriter, r *http.Request) {
-  // get context from request and pool from context
+  // get context from request and app context from context
   ctx := r.Context()
-  pool := poolFromContext(ctx)
+  appCtx := appContextFromContext(ctx)
 
   // set response header
   w.Header().Add("Content-Type", "text/json")
 
   // get books
-  books, err := model.Search(ctx, pool, r.FormValue("q"))
+  books, err := appCtx.Model.Search(ctx, appCtx.Pool, r.FormValue("q"))
   if err != nil {
     panic(err)
   }
@@ -45,9 +45,9 @@ func doApiSearch(w http.ResponseWriter, r *http.Request) {
 
 // Route handler which shows contents of given book.
 func doBook(w http.ResponseWriter, r *http.Request) {
-  // get context from request and pool from context
+  // get context from request and app context from context
   ctx := r.Context()
-  pool := poolFromContext(ctx)
+  appCtx := appContextFromContext(ctx)
 
   // parse book ID
   bookId, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 32)
@@ -56,7 +56,7 @@ func doBook(w http.ResponseWriter, r *http.Request) {
   }
 
   // get book body
-  body, err := model.Body(ctx, pool, bookId)
+  body, err := appCtx.Model.Body(ctx, appCtx.Pool, bookId)
   if err != nil {
     panic(err)
   }
@@ -70,9 +70,9 @@ func doBook(w http.ResponseWriter, r *http.Request) {
 
 // Route handler for file uploads
 func doApiUpload(w http.ResponseWriter, r *http.Request) {
-  // get context from request and pool from context
+  // get context from request and app context from context
   ctx := r.Context()
-  pool := poolFromContext(ctx)
+  appCtx := appContextFromContext(ctx)
 
   // get multipart reader from request
   mpr, err := r.MultipartReader()
@@ -104,7 +104,7 @@ func doApiUpload(w http.ResponseWriter, r *http.Request) {
   }
 
   // upload files
-  if err := model.Upload(ctx, pool, files); err != nil {
+  if err := appCtx.Model.Upload(ctx, appCtx.Pool, files); err != nil {
     panic(err)
   }
 
@@ -117,9 +117,9 @@ func doApiUpload(w http.ResponseWriter, r *http.Request) {
 
 // Edit book route handler.
 func doApiEdit(w http.ResponseWriter, r *http.Request) {
-  // get context from request and pool from context
+  // get context from request and app context from context
   ctx := r.Context()
-  pool := poolFromContext(ctx)
+  appCtx := appContextFromContext(ctx)
 
   // parse book ID
   id, err := strconv.ParseInt(r.FormValue("id"), 10, 32)
@@ -132,7 +132,7 @@ func doApiEdit(w http.ResponseWriter, r *http.Request) {
   author := r.FormValue("author")
 
   // edit book
-  if err := model.Edit(ctx, pool, id, name, author); err != nil {
+  if err := appCtx.Model.Edit(ctx, appCtx.Pool, id, name, author); err != nil {
     panic(err)
   }
 
@@ -167,7 +167,7 @@ var compressContentTypes = []string {
 // Passed to the SecurityHeaders middleware.
 var contentSecurityPolicy = "default-src 'self'; img-src 'self' data:"
 
-func NewRouter(pool *pgxpool.Pool) (*chi.Mux, error) {
+func NewRouter(appCtx *app.Context) (*chi.Mux, error) {
   // get public directory
   public, err := io_fs.Sub(publicFs, "public")
   if err != nil {
@@ -180,7 +180,7 @@ func NewRouter(pool *pgxpool.Pool) (*chi.Mux, error) {
 	r.Use(middleware.Recoverer)
   r.Use(middleware.Compress(5, compressContentTypes...))
   r.Use(SecurityHeadersMiddleware(contentSecurityPolicy))
-	r.Use(PoolMiddleware(pool))
+	r.Use(AppContextMiddleware(appCtx))
 
   // bind routes
 	r.Get("/api/search", doApiSearch)

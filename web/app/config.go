@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
   "os"
@@ -32,7 +32,7 @@ var defaultConfig = Config {
 // * BOOKMAN_PASSWORD_PATH: path to file containing database password
 // * BOOKMAN_DATABASE_DSN: database dsn
 // * BOOKMAN_HTTP_ADDR: host and port to listen for http requests
-func newConfigFromEnv() Config {
+func NewConfigFromEnv() Config {
   // create config
   config := defaultConfig
 

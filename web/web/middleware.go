@@ -1,25 +1,26 @@
 package web
 
 import (
+  "bookman/app"
   "context"
-  "github.com/jackc/pgx/v5/pgxpool"
   "net/http"
 )
 
-// pool context key
-var poolKey struct{}
+// appCtx context key
+var appCtxKey struct{}
 
-// get database pool from context
-func poolFromContext(ctx context.Context) *pgxpool.Pool {
-  return ctx.Value(poolKey).(*pgxpool.Pool)
+// get application context from context
+func appContextFromContext(ctx context.Context) *app.Context {
+  return ctx.Value(appCtxKey).(*app.Context)
 }
 
-// HTTP middleware which stores the given pool in the request context.
-func PoolMiddleware(pool *pgxpool.Pool) func(next http.Handler) http.Handler {
+// HTTP middleware which stores the given application context in the
+// request context.
+func AppContextMiddleware(appCtx *app.Context) func(next http.Handler) http.Handler {
   return func(next http.Handler) http.Handler {
     return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-      // create new context with pool from request context
-      ctx := context.WithValue(r.Context(), poolKey, pool)
+      // create new context with appCtx from request context
+      ctx := context.WithValue(r.Context(), appCtxKey, appCtx)
 
       // call the next handler in the chain
       next.ServeHTTP(w, r.WithContext(ctx))
