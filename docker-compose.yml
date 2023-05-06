@@ -1,0 +1,35 @@
+version: 3.7
+
+services:
+  # database server
+  db:
+    build: ./db
+    ports:
+      - "5432:5432"
+    volumes:
+      - bookman-pgdata:/var/lib/postgresql/data/pgdata
+    environment:
+      POSTGRES_PASSWORD_FILE: "/run/secrets/bookman_postgres_password"
+    secrets:
+      - bookman_postgres_password 
+      - bookman_web_password
+    restart: always
+
+  # web server
+  web:
+    build: ./web
+    environment:
+      BOOKMAN_PASSWORD_PATH: "/run/secrets/bookman_web_password"
+      BOOKMAN_DATABASE_DSN: "host=db dbname=bookman user=bookman_web"
+      BOOKMAN_HTTP_ADDR: ":3000"
+    secrets:
+      - bookman_postgres_password 
+      - bookman_web_password
+    restart: always
+    depends_on:
+      - db
+
+secrets:
+  bookman_postgres_password:
+    external: true
+  bookman_web_password:
