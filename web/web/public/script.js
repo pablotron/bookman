@@ -60,7 +60,7 @@
     const new_q = field.value;
     const old_q = books.dataset.q || '';
 
-    if (new_q !== old_q) {
+    if (new_q === '' || new_q !== old_q) {
       // build url
       const url = 'api/search?' + (new URLSearchParams({ q: new_q })).toString();
 
