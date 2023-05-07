@@ -57,10 +57,21 @@
   };
 
   const refresh = () => {
-    const url = 'api/search?' + (new URLSearchParams({q: field.value})).toString();
-    fetch(url).then((r) => r.json()).then((r) => {
-      books.innerHTML = (r.length > 0) ? T.list(r): T.none();
-    });
+    const new_q = field.value;
+    const old_q = books.dataset.q || '';
+
+    if (new_q !== old_q) {
+      // build url
+      const url = 'api/search?' + (new URLSearchParams({ q: new_q })).toString();
+
+      fetch(url).then((r) => r.json()).then((r) => {
+        // cache query string
+        books.dataset.q = q;
+
+        // refresh list
+        books.innerHTML = (r.length > 0) ? T.list(r): T.none();
+      });
+    }
   };
 
   on(document, 'DOMContentLoaded', () => {
