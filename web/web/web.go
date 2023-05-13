@@ -175,21 +175,21 @@ func NewRouter(appCtx *app.Context) (*chi.Mux, error) {
   }
 
   // create router, attach middleware
-	r := chi.NewRouter()
-	r.Use(middleware.Logger)
-	r.Use(middleware.Recoverer)
+  r := chi.NewRouter()
+  r.Use(middleware.Logger)
+  r.Use(middleware.Recoverer)
   r.Use(middleware.Compress(5, compressContentTypes...))
   r.Use(SecurityHeadersMiddleware(contentSecurityPolicy))
-	r.Use(AppContextMiddleware(appCtx))
+  r.Use(AppContextMiddleware(appCtx))
 
   // bind routes
-	r.Get("/api/search", doApiSearch)
-	r.Get("/api/panic", doApiPanic)
-	r.Post("/api/upload", doApiUpload)
-	r.Post("/api/edit", doApiEdit)
-	r.Get("/book/{id:^\\d+$}", doBook)
+  r.Get("/api/search", doApiSearch)
+  r.Get("/api/panic", doApiPanic)
+  r.Post("/api/upload", doApiUpload)
+  r.Post("/api/edit", doApiEdit)
+  r.Get("/book/{id:^\\d+$}", doBook)
   // bind static site (note the "/*" to match all files)
-	r.Handle("/*", http.FileServer(http.FS(public)))
+  r.Handle("/*", http.FileServer(http.FS(public)))
 
   // return router
   return r, nil

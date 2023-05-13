@@ -182,19 +182,19 @@
           modal_hide = (e) => e.classList.remove('is-active'),
           hide_all_modals = () => (qsa('.modal') || []).forEach((e) => modal_hide(e));
 
-		// Add a click event handlers to close parent modal
-		(qsa('.modal-background, .modal-close, .modal-card-head .delete, .modal-card-foot') || []).forEach((e) => {
+    // Add a click event handlers to close parent modal
+    (qsa('.modal-background, .modal-close, .modal-card-head .delete, .modal-card-foot') || []).forEach((e) => {
       const modal = e.closest('.modal');
-			on(e, 'click', () => modal_hide(modal));
-		});
+      on(e, 'click', () => modal_hide(modal));
+    });
 
-		// Add a keyboard event to close all modals
-		on(document, 'keydown', (ev) => {
+    // Add a keyboard event to close all modals
+    on(document, 'keydown', (ev) => {
       // check for escape key
-			if ((ev || window.event).keyCode === 27) {
-				hide_all_modals();
-			}
-		});
+      if ((ev || window.event).keyCode === 27) {
+        hide_all_modals();
+      }
+    });
   });
 
   // load initial list

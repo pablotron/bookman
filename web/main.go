@@ -24,5 +24,5 @@ func main() {
   }
 
   // run http server
-	panic(http.ListenAndServe(config.HttpAddr, r))
+  panic(http.ListenAndServe(config.HttpAddr, r))
 }
