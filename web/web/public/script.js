@@ -62,7 +62,7 @@
 
     if (!new_q || new_q !== old_q) {
       // build url
-      const url = 'api/search?' + (new URLSearchParams({ q: new_q })).toString();
+      const url = './api/search?' + (new URLSearchParams({ q: new_q })).toString();
 
       fetch(url).then((r) => r.json()).then((r) => {
         // cache query string
@@ -117,7 +117,7 @@
       data.append('author', get('edit-author').value);
 
       // send request
-      fetch('api/edit', {
+      fetch('./api/edit', {
         method: 'POST',
         body: data,
       }).then((r) => {
@@ -164,7 +164,7 @@
       }
 
       // fetch files
-      fetch('api/upload', {
+      fetch('./api/upload', {
         method: 'POST',
         body: data,
       }).then((r) => {
