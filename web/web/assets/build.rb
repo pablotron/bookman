@@ -111,6 +111,11 @@ class Builder
       IO.popen(dst_cmd, 'w', out: dst_script_path) do |dst_io|
         IO.copy_stream(src_script_path, dst_io)
       end
+
+      # generate public/index.html
+      src_html_path = File.join(__dir__, '../assets/index.html')
+      dst_html_path = File.join(__dir__, '../public/index.html')
+      sh 'minify', '-o', dst_html_path, src_html_path
     end
   end
 
