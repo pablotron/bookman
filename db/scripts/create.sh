@@ -18,7 +18,7 @@
 #
 
 # set sane behavior
-set -euo pipefile
+set -euo pipefail
 
 # source file path
 SRC_PATH=/docker-entrypoint-initdb.d/books.txt.gz
