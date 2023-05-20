@@ -21,7 +21,7 @@ First, generate database role passwords and save them as [Podman][] secrets:
     for i in bookman_{postgres,web}_password; do
       # generate random password and save it as a secret
       dd if=/dev/urandom bs=16 count=1 status=none | base64 | podman secret create $i -
-    end
+    done
 
 **Note:** Reading 18 bytes from /dev/urandom and base64-encoding them
 produces a 25-digit password with 144 bits of entropy, which should be
