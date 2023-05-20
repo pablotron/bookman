@@ -2,8 +2,9 @@
   "use strict";
 
   // get element by ID, get elements by selector
-  const get = (id) => document.getElementById(id);
-  const qsa = (s) => document.querySelectorAll(s);
+  const D = document;
+  const get = (id) => D.getElementById(id);
+  const qsa = (s) => D.querySelectorAll(s);
   const on = (el, ev, fn) => el.addEventListener(ev, fn);
 
   // cache search field and rows element
@@ -25,7 +26,7 @@
     // result template
     item: (row) => `
       <a
-        href='/book/${h(row.id)}'
+        href='./book/${h(row.id)}'
         class='panel-block'
         title='${h(row.name)}, by ${h(row.author)}'
         aria-label='${h(row.name)}, by ${h(row.author)}'
@@ -74,7 +75,7 @@
     }
   };
 
-  on(document, 'DOMContentLoaded', () => {
+  on(D, 'DOMContentLoaded', () => {
     let t = null;
 
     // search field handler
@@ -189,7 +190,7 @@
     });
 
     // Add a keyboard event to close all modals
-    on(document, 'keydown', (ev) => {
+    on(D, 'keydown', (ev) => {
       // check for escape key
       if ((ev || window.event).keyCode === 27) {
         hide_all_modals();

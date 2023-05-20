@@ -105,7 +105,7 @@ class Builder
       end
 
       # generate public/script.min.js
-      src_script_path = File.join(__dir__, '../public/script.js')
+      src_script_path = File.join(__dir__, '../assets/script.js')
       dst_script_path = File.join(__dir__, '../public/script.min.js')
       sh 'minify', '-o', dst_script_path, src_script_path
     end
