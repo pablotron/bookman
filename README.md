@@ -14,16 +14,17 @@ This repository contains the following containers:
 
 ### Generate Database Role Passwords
 
-First, generate database role passwords and save them as [Podman][] secrets:
+First, generate database role passwords and save them as [Podman][]
+secrets:
 
     # generate passwords for the `postgres` and `bookman_web` database
     # roles and save them as secrets
     for i in bookman_{postgres,web}_password; do
       # generate random password and save it as a secret
-      dd if=/dev/urandom bs=16 count=1 status=none | base64 | podman secret create $i -
+      dd if=/dev/urandom bs=18 count=1 status=none | base64 | podman secret create $i -
     done
 
-**Note:** Reading 18 bytes from /dev/urandom and base64-encoding them
+**Note:** Reading 18 bytes from `/dev/urandom` and base64-encoding them
 produces a 25-digit password with 144 bits of entropy, which should be
 enough for anybody ;).
 
@@ -31,7 +32,7 @@ enough for anybody ;).
 
 To start the containers:
 
-    # build (if necessary) and start containers
+    # build (if necessary) and start containers, run in background
     podman-compose up -d
 
 First run caveats:
@@ -40,12 +41,13 @@ First run caveats:
    and tag images for both containers.  The tags will be re-used for
    subsequent boots.
 2. The first time the `db` container boots it will seed the database
-   with several dozen books from [Project Gutenberg][], so the first
-   boot may take few moments.  Subsequent boots wil re-use the existing
-   database.
+   with several books from [Project Gutenberg][].  This may take a few
+   moments.  Subsequent boots will be faster.
 
 Once the service is initialized, port 3000 of the `web` container is
 exposed on the host and accessible via a web browser.
+
+You can monitor the logs with `podman-compose logs -f`.
 
 ### Stop Service
 
@@ -63,19 +65,20 @@ are a few technical aspects that may be of interest.
 
 * [Bulma][] (custom build to reduce size)
 * Icons from [Bootstrap Icons][]
-* Minified with [tdewolf/minify][] (see `web/assets/build.rb`).
+* Minified with [esbuild][] (see `web/assets/build.rb`).
 
-Static web assets are minified and served compressed to keep the payload size
-below 20 kB.
+Static web assets are minified and served compressed to keep the initial
+payload size below 20 kB.
 
 ### Backend
 
 * [Chi][]: routing and middleware
 * [pgx][]: database driver
 
-The web server itself is a staticly-linked binary built via a [multi-stage
-build][] with web assets embedded into the binary via [go embed][].  As a
-result, the `web` container consists of a single 9MB `/bookman` binary:
+The web server itself is a staticly-linked binary built via a
+[multi-stage build][].  Web assets are minified and embedded into the
+binary via [go embed][].  As a result, the `web` container consists of a
+single 9MB `/bookman` binary:
 
 		> cd web && podman build -t bookman-web .
 		...
@@ -139,6 +142,8 @@ Gutenberg][], so it is quite large.
   "Bootstrap icons"
 [tdewolf/minify]: https://github.com/tdewolff/minify
   "Go minification library and command-line utility."
+[esbuild]: https://esbuild.github.io/
+  "Extremely fast web bundler."
 [go embed]: https://pkg.go.dev/embed
   "Embed files in Go binaries at build time."
 [chi]: https://go-chi.io/
