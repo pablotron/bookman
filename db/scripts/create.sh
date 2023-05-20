@@ -82,7 +82,7 @@ echo "
   COMMENT ON COLUMN books.ts_vec IS 'Book FTS vector';
 
   -- set owner and privileges
-  ALTER TABLE books ONWER TO bookman_sys;
+  ALTER TABLE books OWNER TO bookman_sys;
   GRANT SELECT, INSERT, UPDATE, DELETE ON books TO bookman_web;
 " | psql -v ON_ERROR_STOP=1 -v BOOKMAN_WEB_PASSWORD="$BOOKMAN_WEB_PASSWORD" --dbname "$POSTGRES_DB"
 
