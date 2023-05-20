@@ -1,12 +1,19 @@
 # Bookman DB
 
-Container image with postgres database containing `bookman` database.
+Container image of [Postgres][] database which contains an FTS-indexed
+`books` table.
+
+The `scripts/` directory contains the following files:
+
+* `create.sh`: Create roles, database, and table, then populate the
+  `books` table.
+* `books.txt.gz`: Initial `books` table contents.
 
 The `bookman` database is owned by the `bookman_sys` database role with
 a `bookman` schema containing a `books` table.
 
 The `books` table is pre-populated with a selection of books from
-Project Gutenberg.
+[Project Gutenberg][].
 
 The setup script creates a `bookman_web` role with limited access to
 the database.
@@ -53,3 +60,8 @@ index:
      ORDER BY rank DESC;
 
 Additional queries are available in `web/model/sql/`.
+
+[postgres]: https://www.postgresql.org/
+  "PostgreSQL database server."
+[project gutenberg]: https://www.gutenberg.org/
+  "Project Gutenberg"
