@@ -94,12 +94,12 @@ class Builder
       # build path to style.min.css
       dst_style_path = File.join(__dir__, '../public/style.min.css')
       src_cmd = ['sass', '--sourcemap=none', dst_sass_path]
-      dst_cmd = ['minify', '--mime', 'text/css', '-o', dst_style_path]
+      dst_cmd = ['esbuild', '--minify', '--loader=css']
       @log.debug('run') { JSON({ src_cmd: src_cmd, dst_cmd: dst_cmd }) }
 
       # generate public/style.min.css
       IO.popen(src_cmd, 'r') do |src_io|
-        IO.popen(dst_cmd, 'w') do |dst_io|
+        IO.popen(dst_cmd, 'w', out: dst_style_path) do |dst_io|
           IO.copy_stream(src_io, dst_io)
         end
       end
@@ -107,7 +107,10 @@ class Builder
       # generate public/script.min.js
       src_script_path = File.join(__dir__, '../assets/script.js')
       dst_script_path = File.join(__dir__, '../public/script.min.js')
-      sh 'minify', '-o', dst_script_path, src_script_path
+      dst_cmd = ['esbuild', '--minify']
+      IO.popen(dst_cmd, 'w', out: dst_script_path) do |dst_io|
+        IO.copy_stream(src_script_path, dst_io)
+      end
     end
   end
 
