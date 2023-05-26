@@ -11,8 +11,9 @@ clean:
 # needs to be run before `make all` if any of the following have
 # changed:
 #
-# * web/public/script.js 
+# * web/assets/script.js
 # * web/assets/bookman.sass
+# * web/assets/index.html
 assets:
 	ruby web/assets/build.rb
 
